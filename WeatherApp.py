@@ -10,6 +10,31 @@ root = tk.Tk()
 root.geometry('600x400')
 root.title('Weather app')
 
+def createtable():
+    try:
+        connection_obj = sqlite3.connect('weather.db')
+        sql_weather = '''CREATE TABLE WEATHER (
+            id integer PRIMARY KEY,
+            lat text NOT NULL,
+            lon text NOT NULL,
+            Wind text NOT NULL,
+            Rain Description text NOT NULL,
+            name text);'''
+        cursor = connection_obj.cursor()
+        print("Successfully connected")
+        cursor.execute(sql_weather)
+        connection_obj.commit()
+        print("SQLite table created")
+
+        cursor.close()
+
+    except sqlite3.Error as error:
+        print("Error while creatiing a sqlite table",error)
+    finally:
+        if connection_obj:
+            connection_obj.close()
+            print("sqlite connection is closed")
+createtable()
 
 
 #function for api
@@ -23,10 +48,7 @@ def submit():
     rainDescription = json_data['weather'][0]['main']
 
 
-
-    return lat,lon,wSpeed,rainDescription,location
-
-
+    insertvariables(1,lat, lon, wSpeed, rainDescription, location)
 
 
 lon = tk.StringVar()
@@ -38,17 +60,11 @@ lon_entry = tk.Entry(root,textvariable = lon, font=('calibre',10,'normal'))
 lat_label = tk.Label(root, text = 'Latitude', font = ('calibre',10,'bold'))
 lat_entry=tk.Entry(root, textvariable = lat, font = ('calibre',10,'normal'))
 
-#button
-sub_btn=tk.Button(root,text = 'Request', command = submit)
-
 #positioning 
 lon_label.grid(row=0,column=0)
 lon_entry.grid(row=0,column=1)
 lat_label.grid(row=1,column=0)
 lat_entry.grid(row=1,column=1)
-sub_btn.grid(row=2,column=1)
-
-
 
 
 # #function for creating table
@@ -77,31 +93,6 @@ sub_btn.grid(row=2,column=1)
 
 # table1()
 
-
-#create sqlite3 table 
-# try:
-#     connection_obj = sqlite3.connect('weather.db')
-#     sql_weather = '''CREATE TABLE WEATHER (
-#         id integer PRIMARY KEY,
-#         lat text NOT NULL,
-#         lon text NOT NULL,
-#         Wind text NOT NULL,
-#         Rain Description text NOT NULL,
-#         name text);'''
-#     cursor = connection_obj.cursor()
-#     print("Successfully connected")
-#     cursor.execute(sql_weather)
-#     connection_obj.commit()
-#     print("SQLite table created")
-
-#     cursor.close()
-
-# except sqlite3.Error as error:
-#     print("Error while creatiing a sqlite table",error)
-# finally:
-#     if connection_obj:
-#         connection_obj.close()
-#         print("sqlite connection is closed")
 def insertvariables(id, lat, lon, Wind, Rain, Name):
 
     try:
@@ -110,10 +101,10 @@ def insertvariables(id, lat, lon, Wind, Rain, Name):
         print("Sucessfully connected")
 
         query = ''' INSERT INTO weather
-                (id,lat, lon, Wind, Rain Description,name) 
+                (id,lat, lon, Wind, Rain, name) 
                 VALUES (?,?,?,?,?,?)'''
         data_tuple = (id, lat, lon, Wind, Rain, Name)
-        cursor.execute(query data_tuple)
+        cursor.execute(query, data_tuple)
         sqliteconnection.commit()
         print("Successful")
         cursor.close()
@@ -125,7 +116,8 @@ def insertvariables(id, lat, lon, Wind, Rain, Name):
             sqliteconnection.close()
             print("The connection is closed")
 
-insertvariables(1,lat, lon, wSpeed, rainDescription, location)
 
+sub_btn=tk.Button(root,text = 'Request', command = submit)
+sub_btn.grid(row=2,column=1)
 
 root.mainloop()
