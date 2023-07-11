@@ -11,6 +11,7 @@ root.geometry('600x400')
 root.title('Weather app')
 
 
+
 #function for api
 def submit():
     lat = lat_entry.get()
@@ -19,12 +20,12 @@ def submit():
     json_data = data1.json()
     wSpeed=json_data['wind']['speed']
     location = json_data['name']
-    print(location)
-    print(json_data)
-    rainDescription = json_data['weather']['main']
-    print(lon,lat,wSpeed,location)
-    print(rainDescription)
-    #return lat,lon,wSpeed,location,rainDescription
+    rainDescription = json_data['weather'][0]['main']
+
+
+
+    return lat,lon,wSpeed,rainDescription,location
+
 
 
 
@@ -63,7 +64,7 @@ def table1():
  
 # take the data
 lst = [('','Lon','Lat','Rain Description','Windspeed','Location Name'),
-       (1,'','','','',''),
+       (1,lon,lat,rainDescription,wSpeed,location),
        (2,'','','','',''),
        (3,'','','','',''),
        (4,'','','','',''),
