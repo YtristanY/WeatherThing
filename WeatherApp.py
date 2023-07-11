@@ -51,31 +51,81 @@ sub_btn.grid(row=2,column=1)
 
 
 
-#function for creating table
-def table1():
-    for i in range(total_rows):
-                for j in range(total_columns):
+# #function for creating table
+# def table1():
+#     for i in range(total_rows):
+#                 for j in range(total_columns):
                     
-                    e = tk.Entry(root, width=15, fg='blue',
-                                font=('Arial',16,'bold'))
+#                     e = tk.Entry(root, width=15, fg='blue',
+#                                 font=('Arial',16,'bold'))
                     
-                    e.grid(row=i+15, column=j)
-                    e.insert(tk.END, lst[i][j])
+#                     e.grid(row=i+15, column=j)
+#                     e.insert(tk.END, lst[i][j])
  
-# take the data
-lst = [('','Lon','Lat','Rain Description','Windspeed','Location Name'),
-       (1,lon,lat,rainDescription,wSpeed,location),
-       (2,'','','','',''),
-       (3,'','','','',''),
-       (4,'','','','',''),
-       (5, '','','','','')]
+# # take the data
+# lst = [('','Lon','Lat','Rain Description','Windspeed','Location Name'),
+#        (1,'','','','',''),
+#        (2,'','','','',''),
+#        (3,'','','','',''),
+#        (4,'','','','',''),
+#        (5, '','','','','')]
   
-# find total number of rows and
-# columns in list
-total_rows = len(lst)
-total_columns = len(lst[0])
+# # find total number of rows and
+# # columns in list
+# total_rows = len(lst)
+# total_columns = len(lst[0])
 
-table1()
+# table1()
+
+
+#create sqlite3 table 
+# try:
+#     connection_obj = sqlite3.connect('weather.db')
+#     sql_weather = '''CREATE TABLE WEATHER (
+#         id integer PRIMARY KEY,
+#         lat text NOT NULL,
+#         lon text NOT NULL,
+#         Wind text NOT NULL,
+#         Rain Description text NOT NULL,
+#         name text);'''
+#     cursor = connection_obj.cursor()
+#     print("Successfully connected")
+#     cursor.execute(sql_weather)
+#     connection_obj.commit()
+#     print("SQLite table created")
+
+#     cursor.close()
+
+# except sqlite3.Error as error:
+#     print("Error while creatiing a sqlite table",error)
+# finally:
+#     if connection_obj:
+#         connection_obj.close()
+#         print("sqlite connection is closed")
+def insertvariables(id, lat, lon, Wind, Rain, Name):
+
+    try:
+        sqliteconnection = sqlite3.connect('weather.db')
+        cursor = sqliteconnection.cursor()
+        print("Sucessfully connected")
+
+        query = ''' INSERT INTO weather
+                (id,lat, lon, Wind, Rain Description,name) 
+                VALUES (?,?,?,?,?,?)'''
+        data_tuple = (id, lat, lon, Wind, Rain, Name)
+        cursor.execute(query data_tuple)
+        sqliteconnection.commit()
+        print("Successful")
+        cursor.close()
+
+    except sqlite3.Error as error:
+        print("Failed to insert",error)
+    finally:
+        if sqliteconnection:
+            sqliteconnection.close()
+            print("The connection is closed")
+
+insertvariables(1,lat, lon, wSpeed, rainDescription, location)
 
 
 root.mainloop()
